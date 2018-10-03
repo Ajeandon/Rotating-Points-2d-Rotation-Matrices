@@ -4,17 +4,18 @@ let Grid = function(width, height, scl){
     this.y = Math.ceil(height / scl);
     this.scl = scl;
     this.pieces = [];
+    this.pivot = null;
 }
 
 Grid.prototype.draw = function(ctx){
-    for(let i = 0; i < this.x; i++){
+    for(let i = 0; i < this.y; i++){
 
-	for(let j = 0; j < this.y; j++){
+	for(let j = 0; j < this.x; j++){
 
 	    ctx.fillStyle ='#FFF';
-	    ctx.stokeStyle ='#C3C3C3';
-	    ctx.fillRect(i * this.scl, j * this.scl, this.scl, this.scl);
-	    ctx.strokeRect(i * this.scl, j * this.scl, this.scl, this.scl);
+	    ctx.strokeStyle ='#C3C3C3';
+	    ctx.fillRect(j * this.scl, i * this.scl, this.scl, this.scl);
+	    ctx.strokeRect(j * this.scl, i * this.scl, this.scl, this.scl);
 	    
 	    ctx.fill();
 	    ctx.stroke();
@@ -22,8 +23,61 @@ Grid.prototype.draw = function(ctx){
 	}
 
     }
+
+    this.drawPieces(ctx);
+}
+
+Grid.prototype.drawPieces = function(ctx){
+    for(let i = 0; i < this.pieces.length; i++){
+	let piece = this.pieces[i];
+
+	if(null !== this.pivot &&  piece.x == this.pivot.x && piece.y == this.pivot.y)
+	    ctx.fillStyle ='green';
+	else
+	    ctx.fillStyle ='blue';
+
+	ctx.strokeStyle ='#C3C3C3';
+	ctx.fillRect(piece.x, piece.y, this.scl, this.scl);
+	ctx.strokeRect(piece.x, piece.y, this.scl, this.scl);
+	
+	ctx.fill();
+	ctx.stroke();
+
+	
+    }
+}
+
+Grid.prototype.isSetPiece = function(piece){
+
+    for(let i = 0; i < this.pieces.length; i++){
+	if(this.pieces[i].x == piece.x && this.pieces[i].y == piece.y)
+	    return i;
+    }
+
+    return false;
 }
 
 Grid.prototype.addPiece = function(x, y){
+    let piece = {x : x, y : y}, index;
+    if((index = this.isSetPiece(piece)) !== false){
+	if(null !== this.pivot && piece.x == this.pivot.x && piece.y == this.pivot.y){
+	    this.pivot = null;
+	    this.pieces.splice(index, 1);
+	}else{
+	    this.pivot = piece;
+	}
+    }else{
+	this.pieces.push(piece);
+    }
+    
+}
 
+Grid.prototype.onClick = function(canvas, evt){
+    let rect = canvas.getBoundingClientRect();
+    let pos = {
+	x: Math.floor((evt.clientX - rect.left) / this.scl) * this.scl,
+	y: Math.floor((evt.clientY - rect.top) / this.scl) * this.scl
+    };
+
+    this.addPiece(pos.x, pos.y);
 }

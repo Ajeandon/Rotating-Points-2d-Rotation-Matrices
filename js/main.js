@@ -16,6 +16,10 @@ function setup(){
 
     grid = new Grid(width, height, scl);
 
+    canvas.addEventListener('click', function(e){
+	grid.onClick(canvas, e);
+    });
+    
     update();
 }
 
