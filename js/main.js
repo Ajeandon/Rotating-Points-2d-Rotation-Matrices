@@ -19,6 +19,11 @@ function setup(){
     canvas.addEventListener('click', function(e){
 	grid.onClick(canvas, e);
     });
+
+    document.addEventListener('keypress', function(e){
+	if(e.charCode == 32)
+	    grid.pieceRotation((90 * Math.PI) / 180); // convert 90 degrees to radians ( angle * (pi / 180) )
+    });
     
     update();
 }

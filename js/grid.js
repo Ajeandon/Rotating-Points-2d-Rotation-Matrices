@@ -72,6 +72,32 @@ Grid.prototype.addPiece = function(x, y){
     
 }
 
+Grid.prototype.pieceRotation = function(angle){
+    
+    if(null === this.pivot){
+	alert('you have to create a pivot');
+	return;
+    }
+    
+    for(let i = 0; i < this.pieces.length; i++){
+	let piece = this.pieces[i];
+	
+	if(piece.x != this.pivot.x || piece.y != this.pivot.y){
+	    
+	    let vr = {};
+	    vr.x = piece.x - this.pivot.x;
+	    vr.y = piece.y - this.pivot.y;
+
+	    let vt = {};
+	    vt.x = (Math.sin(angle) * vr.y) + (Math.cos(angle) * vr.x);
+	    vt.y = (Math.cos(angle) * vr.y) + (-Math.sin(angle) * vr.x);
+
+	    this.pieces[i].x = this.pivot.x + vt.x;
+	    this.pieces[i].y = this.pivot.y + vt.y;
+	}
+    }
+}
+
 Grid.prototype.onClick = function(canvas, evt){
     let rect = canvas.getBoundingClientRect();
     let pos = {
